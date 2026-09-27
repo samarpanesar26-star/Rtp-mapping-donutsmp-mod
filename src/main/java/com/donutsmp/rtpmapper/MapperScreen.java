@@ -2,6 +2,7 @@ package com.donutsmp.rtpmapper;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -157,10 +158,18 @@ public final class MapperScreen extends Screen {
     @Override public boolean mouseScrolled(double mouseX,double mouseY,double horizontalAmount,double verticalAmount){
         if(mouseX>680){zoom*=verticalAmount>0?1.15:0.87;zoom=Math.max(0.2,Math.min(6.0,zoom));return true;}return super.mouseScrolled(mouseX,mouseY,horizontalAmount,verticalAmount);
     }
-    @Override public boolean mouseClicked(double mouseX,double mouseY,int button){dragging=true;dragLastX=mouseX;dragLastY=mouseY;return super.mouseClicked(mouseX,mouseY,button);}
-    @Override public boolean mouseReleased(double mouseX,double mouseY,int button){dragging=false;return super.mouseReleased(mouseX,mouseY,button);}
-    @Override public boolean mouseDragged(double mouseX,double mouseY,int button,double deltaX,double deltaY){
-        if(dragging){double unitsPerPixel=1800.0/zoom;panX-=deltaX*unitsPerPixel;panZ-=deltaY*unitsPerPixel;return true;}return super.mouseDragged(mouseX,mouseY,button,deltaX,deltaY);
+    @Override public boolean mouseClicked(Click click, boolean doubled){
+        boolean handled=super.mouseClicked(click,doubled);
+        if(!handled && click.buttonInfo().button()==0){dragging=true;dragLastX=click.x();dragLastY=click.y();return true;}
+        return handled;
+    }
+    @Override public boolean mouseReleased(Click click){
+        dragging=false;
+        return super.mouseReleased(click);
+    }
+    @Override public boolean mouseDragged(Click click,double deltaX,double deltaY){
+        if(dragging && click.buttonInfo().button()==0){double unitsPerPixel=1800.0/zoom;panX-=deltaX*unitsPerPixel;panZ-=deltaY*unitsPerPixel;return true;}
+        return super.mouseDragged(click,deltaX,deltaY);
     }
     @Override public void close(){if(client!=null)client.setScreen(parent);}
 }
