@@ -152,11 +152,39 @@ public final class MapperScreen extends Screen {
             double cursorX=cx+(mouseX-midX)*unitsPerPixel;
             double cursorZ=cz+(mouseY-midY)*unitsPerPixel;
             String coords=String.format("Cursor X: %.0f  Z: %.0f",cursorX,cursorZ);
-            int boxW=150, boxH=22;
+            String region="Region: "+regionFor(cursorX,cursorZ);
+            int boxW=150, boxH=38;
             int bx=Math.min(mouseX+12,r-boxW-4), by=Math.min(mouseY+12,b-boxH-4);
             c.fill(bx,by,bx+boxW,by+boxH,0xF0141C28);
-            c.drawText(textRenderer,coords,bx+6,by+7,CYAN,false);
+            c.drawText(textRenderer,coords,bx+6,by+6,CYAN,false);
+            c.drawText(textRenderer,region,bx+6,by+20,WHITE,false);
         }
+    }
+
+    /**
+     * Current community-mapped DonutSMP Overworld region grid.
+     * The published map uses 25k x 25k tiles around 0,0. Region slices can
+     * change as the server population changes, so this is intentionally a
+     * best-effort label rather than a server-authoritative query.
+     *
+     * Rows run from +Z to -Z and columns from -X to +X.
+     */
+    private String regionFor(double x, double z){
+        if(x < -112500 || x >= 112500 || z < -112500 || z >= 112500) return "Unknown";
+        int col=(int)Math.floor((x+112500)/25000);
+        int row=(int)Math.floor((112500-z)/25000);
+        final String[][] regions={
+            {"Oceania","Oceania","Oceania","Oceania","NA East","NA East","NA East","NA East","NA East"},
+            {"Oceania","NA West","NA West","NA West","NA East","NA East","NA East","NA East","NA East"},
+            {"Oceania","NA West","NA West","NA West","NA East","NA East","NA East","NA East","NA East"},
+            {"Oceania","Oceania","Oceania","NA West","NA East","NA East","NA East","NA East","NA East"},
+            {"Asia","Asia","Asia","Asia","NA East","NA East","NA East","NA East","NA East"},
+            {"Asia","EU West","EU West","EU Central","EU Central","EU Central","EU Central","EU Central","NA East"},
+            {"Asia","EU West","EU West","EU Central","EU Central","EU Central","EU Central","EU Central","EU Central"},
+            {"EU Central","EU West","EU Central","EU Central","EU Central","EU Central","EU Central","EU Central","EU Central"},
+            {"EU Central","EU West","EU West","EU West","EU West","EU West","EU West","EU West","EU Central"}
+        };
+        return regions[row][col];
     }
 
     private void drawCircle(DrawContext c,int cx,int cy,int radius,int color){
