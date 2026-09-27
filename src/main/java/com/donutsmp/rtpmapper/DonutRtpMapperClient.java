@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public final class DonutRtpMapperClient implements ClientModInitializer {
@@ -14,6 +15,7 @@ public final class DonutRtpMapperClient implements ClientModInitializer {
     public static final RtpStore STORE = new RtpStore();
     private static KeyBinding openMapper;
     private static boolean mappingEnabled = false;
+    private static final KeyBinding.Category CATEGORY = KeyBinding.Category.create(Identifier.of(MOD_ID, "mapper"));
     private static boolean waitingForRtp = false;
     private static long waitingSince = 0L;
     private static double waitingX, waitingY, waitingZ;
@@ -26,7 +28,7 @@ public final class DonutRtpMapperClient implements ClientModInitializer {
                 "key.donutsmp_rtp_mapper.open",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                "category.donutsmp_rtp_mapper"
+                CATEGORY
         ));
 
         ClientSendMessageEvents.ALLOW_COMMAND.register(command -> {
