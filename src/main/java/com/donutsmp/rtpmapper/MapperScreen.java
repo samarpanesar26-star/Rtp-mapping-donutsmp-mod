@@ -127,7 +127,7 @@ public final class MapperScreen extends Screen {
         heading(c,"RADIUS BUCKETS · WHEEL",x,y);y+=18;
         int[] buckets=new int[10]; for(RtpPoint p:pts){int b=(int)(Math.hypot(p.x(),p.z())/25000); if(b>=buckets.length)b=buckets.length-1;buckets[b]++;}
         for(int i=0;i<10;i++){c.drawText(textRenderer,String.format("%-8s %d",(i*25)+"k-"+((i+1)*25)+"k",buckets[i]),x,y, i>=8?CYAN:MUTED,false);y+=15;}
-        c.drawText(textRenderer,"Version 1.0.0 · MC 1.21.1",x,height-38,MUTED,false);
+        c.drawText(textRenderer,"Version 1.0.1 · MC 1.21.11",x,height-38,MUTED,false);
     }
 
     private void heading(DrawContext c,String s,int x,int y){c.drawText(textRenderer,s,x,y,CYAN,false);}
