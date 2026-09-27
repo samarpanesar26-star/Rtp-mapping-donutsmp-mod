@@ -83,7 +83,7 @@ public final class MapperScreen extends Screen {
         panel(ctx, mapL, mapT, mapR - mapL, mapB - mapT);
         drawLeft(ctx, left + 12, top + 12);
         drawStats(ctx, left + 12, top + 276);
-        drawMap(ctx, mapL, mapT, mapR, mapB);
+        drawMap(ctx, mapL, mapT, mapR, mapB, mouseX, mouseY);
         super.render(ctx, mouseX, mouseY, delta);
     }
 
@@ -133,7 +133,7 @@ public final class MapperScreen extends Screen {
 
     private void heading(DrawContext c,String s,int x,int y){c.drawText(textRenderer,s,x,y,CYAN,false);}
 
-    private void drawMap(DrawContext c,int l,int t,int r,int b){
+    private void drawMap(DrawContext c,int l,int t,int r,int b,int mouseX,int mouseY){
         int w=r-l,h=b-t; c.fill(l+1,t+1,r-1,b-1,PANEL2);
         double cx=centerX+panX, cz=centerZ+panZ; double unitsPerPixel=1800.0/zoom;
         int midX=(l+r)/2, midY=(t+b)/2;
@@ -148,6 +148,15 @@ public final class MapperScreen extends Screen {
         c.drawText(textRenderer,"X",r-18, t+6,WHITE,false); c.drawText(textRenderer,"Z",midX+6,t+6,WHITE,false);
         c.drawText(textRenderer,String.format("Center %.0f, %.0f  ·  Zoom %.2fx",cx,cz,zoom),l+8,b-16,MUTED,false);
         c.drawText(textRenderer,"Saved "+DonutRtpMapperClient.STORE.size()+" all-time samples",l+8,b-31,MUTED,false);
+        if(mouseX>=l && mouseX<r && mouseY>=t && mouseY<b){
+            double cursorX=cx+(mouseX-midX)*unitsPerPixel;
+            double cursorZ=cz+(mouseY-midY)*unitsPerPixel;
+            String coords=String.format("Cursor X: %.0f  Z: %.0f",cursorX,cursorZ);
+            int boxW=150, boxH=22;
+            int bx=Math.min(mouseX+12,r-boxW-4), by=Math.min(mouseY+12,b-boxH-4);
+            c.fill(bx,by,bx+boxW,by+boxH,0xF0141C28);
+            c.drawText(textRenderer,coords,bx+6,by+7,CYAN,false);
+        }
     }
 
     private void drawCircle(DrawContext c,int cx,int cy,int radius,int color){
